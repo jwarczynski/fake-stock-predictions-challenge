@@ -4,10 +4,10 @@ from sklearn.linear_model import LinearRegression
 from data_loader import load_data
 from helper import calculate_risk, generate_risk_and_return_weights
 from weighted_sum_strategy import WeightedSumStrategy
-
+from epsilon_constrained_strategy import EpsilonConstrainedStrategy
 
 class WarrenBuffett:
-    def __init__(self, path="Bundle1", extension=".txt", strategy="wcm"):
+    def __init__(self, strategy="wcm", path="Bundle1", extension=".txt"):
         self.__asset_data = load_data(path, extension)
 
         self.__asset_predictions = {}
@@ -23,7 +23,7 @@ class WarrenBuffett:
         if strategy == "wcm":
             self.strategy = WeightedSumStrategy()
         elif strategy == "ecm":
-            pass
+            self.strategy = EpsilonConstrainedStrategy()
         else:
             raise ValueError("Invalid strategy")
 
@@ -92,37 +92,13 @@ class WarrenBuffett:
             for j, (asset2, std_dev2) in enumerate(self.__asset_std_devs.items()):
                 self.__covariance_matrix[i, j] = np.cov(std_dev1, std_dev2)[0, 1]
 
-    def __calculate_return_and_risk_spreads(self):
-        expected_returns = np.array(list(self.__asset_expected_returns.values()))
-        max_profit_weights, max_returns = self.strategy.optimize_portfolio(
-            expected_returns, self.__covariance_matrix,
-            1, 0
-        )
-        min_risk_weights, min_risk_returns = self.strategy.optimize_portfolio(
-                expected_returns, self.__covariance_matrix,
-                0, 1
-            )
-
-        max_risk = calculate_risk(max_profit_weights, self.__covariance_matrix)
-        min_risk = calculate_risk(min_risk_weights, self.__covariance_matrix)
-
-        self.__returns_spread = max_returns - min_risk_returns
-        self.__risk_spread = max_risk - min_risk
-
-        return max_returns - min_risk_returns, max_risk - min_risk
-
     def __generate_pareto_front(self):
-        self.__calculate_return_and_risk_spreads()
-        coefficients = generate_risk_and_return_weights()
-
         expected_returns = np.array(list(self.__asset_expected_returns.values()))
         pareto_solutions = self.strategy.generate_pareto_front(
-            expected_returns, self.__covariance_matrix, coefficients,
-            self.__returns_spread, self.__risk_spread
+            expected_returns, self.__covariance_matrix,
         )
 
-        for weights, gain in zip(*pareto_solutions):
-            risk = calculate_risk(weights, self.__covariance_matrix)
+        for weights, gain, risk in zip(*pareto_solutions):
             self.__investment_profiles.append((weights, gain, risk))
 
     def get_investment_profiles(self):
