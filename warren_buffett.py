@@ -7,7 +7,7 @@ from weighted_sum_strategy import WeightedSumStrategy
 from epsilon_constrained_strategy import EpsilonConstrainedStrategy
 
 class WarrenBuffett:
-    def __init__(self, strategy="wcm", path="Bundle1", extension=".txt"):
+    def __init__(self, strategy="wsm", path="Bundle1", extension=".txt"):
         self.__asset_data = load_data(path, extension)
 
         self.__asset_predictions = {}
@@ -20,7 +20,9 @@ class WarrenBuffett:
 
         self.__investment_profiles = []
 
-        if strategy == "wcm":
+        self.fortune_teller = FFTFortuneTeller()
+
+        if strategy == "wsm":
             self.strategy = WeightedSumStrategy()
         elif strategy == "ecm":
             self.strategy = EpsilonConstrainedStrategy()
@@ -40,7 +42,7 @@ class WarrenBuffett:
         return self.get_investment_profiles()
 
     def set_strategy(self, strategy):
-        if strategy == "wcm":
+        if strategy == "wsm":
             self.strategy = WeightedSumStrategy()
         elif strategy == "ecm":
             pass
@@ -49,16 +51,9 @@ class WarrenBuffett:
 
     def __make_predictions(self):
         for asset_name, measurements in self.__asset_data.items():
-            times = [point[0] for point in measurements]
-            prices = [point[1] for point in measurements]
-            X = np.array(times).reshape(-1, 1)
-            y = np.array(prices)
-            model = LinearRegression()
-            model.fit(X, y)
-
-            # Predict stock prices for time 101 to 200
-            future_times = np.arange(101, 201).reshape(-1, 1)
-            predicted_prices = model.predict(future_times)
+            times = np.array([point[0] for point in measurements])
+            prices = np.array([point[1] for point in measurements])
+            predicted_prices = self.fortune_teller.make_prediction(times, prices)
             self.__asset_predictions[asset_name] = predicted_prices
 
     def __calculate_expected_returns(self):
