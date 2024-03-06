@@ -6,7 +6,7 @@ class EpsilonConstrainedStrategy:
     def __init__(self):
         pass
 
-    def optimize_portfolio(self, expected_returns, covariance_matrix, target_return, _=None, __=None, ___=None):
+    def optimize_portfolio(self, expected_returns, covariance_matrix, target_return):
         n = len(expected_returns)
 
         # Quadratic term in the objective function
@@ -15,9 +15,12 @@ class EpsilonConstrainedStrategy:
         # Linear term in the objective function
         c = matrix(0.0, (n, 1))
 
-        # Constraint: expected return >= target return
-        G = matrix(-expected_returns, (1, n))
-        h = matrix(-target_return)
+        # Constraints: expected return >= target return and weights >= 0
+        G1 = -np.eye(n)
+        G2 = -expected_returns
+        G = matrix(np.concatenate((G1, [G2]), axis=0))
+
+        h = matrix(np.concatenate((np.zeros(n), [-target_return])))
 
         # Constraint: sum of weights = 1
         Aeq = matrix(1.0, (1, n))
@@ -32,7 +35,7 @@ class EpsilonConstrainedStrategy:
 
     def generate_pareto_front(self, expected_returns, covariance_matrix):
         expected_return_constraints = np.linspace(
-            max(0, min(expected_returns)), max(expected_returns), 20
+            max(0, min(expected_returns)), max(expected_returns), 100
         )
 
         optimal_weights_list = []
