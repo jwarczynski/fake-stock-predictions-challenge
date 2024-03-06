@@ -98,3 +98,17 @@ class WarrenBuffett:
 
     def get_investment_profiles(self):
         return self.__investment_profiles
+
+    def plot_all_predictions(self):
+        for asset_name, predicted_prices in self.__asset_predictions.items():
+            historical_data = [price for _, price in self.__asset_data[asset_name]]
+            plot_predictions(historical_data, predicted_prices, asset_name)
+
+    def get_assets_keys(self):
+        return np.array(list(self.__asset_data.keys()))
+
+    def show_predictions_for_asset(self, asset_names):
+        for asset_name in asset_names:
+            historical_data = [price for _, price in self.__asset_data[asset_name]]
+            predicted_prices = self.__asset_predictions[asset_name]
+            plot_predictions(historical_data, predicted_prices, asset_name)
