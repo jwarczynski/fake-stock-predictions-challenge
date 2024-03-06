@@ -5,7 +5,6 @@ __pycache__/
 
 .idea
 Bundle1/*
-tests/main.py
 
 # C extensions
 *.so
