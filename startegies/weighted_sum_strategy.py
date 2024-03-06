@@ -64,9 +64,10 @@ class WeightedSumStrategy:
                 return_spread, risk_spread
             )
             risk = calculate_risk(optimal_weights, covariance_matrix)
+            real_portfolio_return = portfolio_return * return_spread
 
             optimal_weights_list.append(optimal_weights)
-            portfolio_return_list.append(portfolio_return)
+            portfolio_return_list.append(real_portfolio_return)
             risks_list.append(risk)
 
         return optimal_weights_list, portfolio_return_list, risks_list
