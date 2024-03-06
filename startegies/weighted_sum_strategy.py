@@ -1,7 +1,7 @@
 import numpy as np
 from cvxopt import matrix, solvers
 
-from helper import generate_risk_and_return_weights, calculate_risk
+from helpers.helper import generate_risk_and_return_weights, calculate_risk
 
 
 class WeightedSumStrategy:

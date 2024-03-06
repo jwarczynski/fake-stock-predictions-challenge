@@ -18,7 +18,7 @@ def calculate_risk(weights, covariance_matrix):
     # return np.sqrt(risk)
 
 
-def generate_risk_and_return_weights(n=20):
+def generate_risk_and_return_weights(n=100):
     """
     Generate k1 and k2 values based on a specific pattern.
 

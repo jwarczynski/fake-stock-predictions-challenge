@@ -1,10 +1,10 @@
 import numpy as np
-from sklearn.linear_model import LinearRegression
 
-from data_loader import load_data
-from helper import calculate_risk, generate_risk_and_return_weights
-from weighted_sum_strategy import WeightedSumStrategy
-from epsilon_constrained_strategy import EpsilonConstrainedStrategy
+from helpers.data_loader import load_data
+from fortune_tellers.fft_fortune_teller import FFTFortuneTeller
+from helpers.visualizer import plot_predictions
+from startegies.weighted_sum_strategy import WeightedSumStrategy
+from startegies.epsilon_constrained_strategy import EpsilonConstrainedStrategy
 
 class WarrenBuffett:
     def __init__(self, strategy="wsm", path="Bundle1", extension=".txt"):
