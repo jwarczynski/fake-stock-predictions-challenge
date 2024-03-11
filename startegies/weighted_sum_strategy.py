@@ -4,6 +4,10 @@ from cvxopt import matrix, solvers
 from helpers.helper import generate_risk_and_return_weights, calculate_risk
 
 
+def calculate_returns(weights, expected_returns):
+    return np.dot(weights.T, expected_returns)
+
+
 class WeightedSumStrategy:
     def __init__(self):
         pass
@@ -22,7 +26,10 @@ class WeightedSumStrategy:
         max_risk = calculate_risk(max_profit_weights, covariance_matrix)
         min_risk = calculate_risk(min_risk_weights, covariance_matrix)
 
-        return max_returns - min_risk_returns, max_risk - min_risk
+        max_returns = calculate_returns(max_profit_weights, expected_returns)
+        min_returns = calculate_returns(min_risk_weights, expected_returns)
+
+        return max_returns - min_returns, max_risk - min_risk
 
     def optimize_portfolio(
             self, expected_returns, covariance_matrix, profit_weight,
@@ -50,7 +57,7 @@ class WeightedSumStrategy:
         return optimal_weights, portfolio_return
 
     def generate_pareto_front(self, expected_returns, covariance_matrix):
-        risk_profit_coeff = generate_risk_and_return_weights()
+        risk_profit_coeff = generate_risk_and_return_weights(100)
         return_spread, risk_spread = self.__calculate_return_and_risk_spreads(expected_returns, covariance_matrix)
 
         optimal_weights_list = []
@@ -64,10 +71,10 @@ class WeightedSumStrategy:
                 return_spread, risk_spread
             )
             risk = calculate_risk(optimal_weights, covariance_matrix)
-            real_portfolio_return = portfolio_return * return_spread
+            real_portfolio_return = calculate_returns(optimal_weights, expected_returns)
 
-            optimal_weights_list.append(optimal_weights)
+            optimal_weights_list.append(np.array([w[0] for w in optimal_weights]))
             portfolio_return_list.append(real_portfolio_return)
-            risks_list.append(risk)
+            risks_list.append(risk[0])
 
         return optimal_weights_list, portfolio_return_list, risks_list
