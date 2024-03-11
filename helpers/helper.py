@@ -30,7 +30,7 @@ def generate_risk_and_return_weights(n=100):
         - List of tuples: Each tuple contains k1 and k2 values.
     """
     weights = []
-    for j1 in range(n + 1):
+    for j1 in range(n):
         return_weight = 1 / n * j1
         risk_weight = 1 - return_weight
         weights.append((return_weight, risk_weight))
