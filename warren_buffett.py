@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 
 from helpers.data_loader import load_data
 from fortune_tellers.fft_fortune_teller import FFTFortuneTeller
@@ -95,9 +96,32 @@ class WarrenBuffett:
         return self.__investment_profiles
 
     def plot_all_predictions(self):
-        for asset_name, predicted_prices in self.__asset_predictions.items():
+        num_assets = len(self.__asset_predictions)
+        num_rows = 5
+        num_cols = (num_assets + num_rows - 1) // num_rows  # Calculate number of columns dynamically
+        fig, axes = plt.subplots(num_rows, num_cols, figsize=(20, 30))
+
+        asset_names = list(self.__asset_predictions.keys())
+        for i, asset_name in enumerate(asset_names):
+            row = i // num_cols
+            col = i % num_cols
+            ax = axes[row, col] if num_assets > 1 else axes  # Handle the case when there is only one asset
             historical_data = [price for _, price in self.__asset_data[asset_name]]
-            plot_predictions(historical_data, predicted_prices, asset_name)
+            predicted_prices = self.__asset_predictions[asset_name]
+            self.plot_predictions(historical_data, predicted_prices, asset_name, ax)
+
+        plt.tight_layout()
+        plt.show()
+
+    def plot_predictions(self, historical_data, predicted_prices, asset_name, ax):
+        last_time = len(historical_data)
+        ax.plot(historical_data, label='Real')
+        ax.plot(range(last_time, last_time + len(predicted_prices)), predicted_prices, label='FFT prediction',
+                linestyle='--')
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Price')
+        ax.set_title(f'{asset_name} stock prices & Fourier predictions')
+        ax.legend()
 
     def get_assets_keys(self):
         return np.array(list(self.__asset_data.keys()))
@@ -107,3 +131,16 @@ class WarrenBuffett:
             historical_data = [price for _, price in self.__asset_data[asset_name]]
             predicted_prices = self.__asset_predictions[asset_name]
             plot_predictions(historical_data, predicted_prices, asset_name)
+
+    def show_weights_for_assets(self, asset_weights):
+        asset_names = list(asset_weights.keys())
+        weights = list(asset_weights.values())
+
+        plt.figure(figsize=(10, 6))
+        plt.barh(asset_names, [w * 100 for w in weights], color='skyblue')  # Multiply weights by 100 to show as percentage
+        plt.xlabel('Percentage of Total Budget')
+        plt.ylabel('Asset Name')
+        plt.title('Portfolio Allocation')
+        plt.gca().invert_yaxis()  # Invert y-axis to display top-down
+        plt.tight_layout()  # Adjust layout to prevent cropping
+        plt.show()
