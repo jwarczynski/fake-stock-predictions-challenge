@@ -1,7 +1,7 @@
 import os
 
 
-def load_data(folder_path="Bundle1", extension=".txt"):
+def load_data(folder_path="Bundle2", extension=".txt"):
     asset_data = {}
 
     for filename in os.listdir(folder_path):

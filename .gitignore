@@ -5,6 +5,10 @@ __pycache__/
 
 .idea
 Bundle1/*
+Bundle2/*
+Bundle3/*
+
+report/*
 
 # C extensions
 *.so

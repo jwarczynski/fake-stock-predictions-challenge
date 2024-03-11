@@ -7,7 +7,7 @@ from startegies.weighted_sum_strategy import WeightedSumStrategy
 from startegies.epsilon_constrained_strategy import EpsilonConstrainedStrategy
 
 class WarrenBuffett:
-    def __init__(self, strategy="wsm", path="Bundle1", extension=".txt"):
+    def __init__(self, strategy="wsm", path="Bundle2", extension=".txt"):
         self.__asset_data = load_data(path, extension)
 
         self.__asset_predictions = {}
@@ -58,14 +58,9 @@ class WarrenBuffett:
 
     def __calculate_expected_returns(self):
         for asset_name, measurements in self.__asset_data.items():
-            price_t100 = next((price for time, price in measurements if time == 100), None)
-            predicted_price_t200 = self.__asset_predictions[asset_name][-1]
-
-            if price_t100 is not None:
-                expected_return = (predicted_price_t200 - price_t100) / price_t100
-            else:
-                expected_return = None
-
+            last_price = measurements[-1][1]
+            future_price_prediction = self.__asset_predictions[asset_name][-1]
+            expected_return = (future_price_prediction - last_price) / last_price
             self.__asset_expected_returns[asset_name] = expected_return
 
     def __calculate_std_devs(self, window_size=10):
