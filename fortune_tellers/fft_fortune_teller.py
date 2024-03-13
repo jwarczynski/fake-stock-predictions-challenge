@@ -28,5 +28,5 @@ class FFTFortuneTeller:
             restored_sig += ampli * np.cos(2 * np.pi * f[i] * t + phase)
         restored_sig = restored_sig + p[0] * t
 
-        return restored_sig[n_predict:]
+        return restored_sig[-n_predict:]
 
