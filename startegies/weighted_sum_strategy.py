@@ -5,7 +5,7 @@ from helpers.helper import generate_risk_and_return_weights, calculate_risk
 
 
 def calculate_returns(weights, expected_returns):
-    return np.dot(weights.T, expected_returns)
+    return np.dot(weights.T, expected_returns)[0]
 
 
 class WeightedSumStrategy:
