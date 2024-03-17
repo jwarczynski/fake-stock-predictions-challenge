@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib.colors as mcolors
 
 from helpers.data_loader import load_data
 from fortune_tellers.fft_fortune_teller import FFTFortuneTeller
@@ -29,6 +30,12 @@ class WarrenBuffett:
             self.strategy = EpsilonConstrainedStrategy()
         else:
             raise ValueError("Invalid strategy")
+
+    def get_expected_returns(self):
+        return self.__asset_expected_returns
+
+    def get_covariance_matrix(self):
+        return self.__covariance_matrix
 
     def explain(self, method="wcm"):
         pass
@@ -95,6 +102,8 @@ class WarrenBuffett:
     def get_investment_profiles(self):
         return self.__investment_profiles
 
+    import matplotlib.colors as mcolors
+
     def plot_all_predictions(self):
         num_assets = len(self.__asset_predictions)
         num_rows = 5
@@ -102,13 +111,33 @@ class WarrenBuffett:
         fig, axes = plt.subplots(num_rows, num_cols, figsize=(20, 30))
 
         asset_names = list(self.__asset_predictions.keys())
+        num_bundles = (len(self.__asset_data) + num_rows - 1) // num_rows
+        base_hue = 0.5
+        hue_increment = 0.4 / num_bundles  # Adjust the increment for subtle hue differences
+
         for i, asset_name in enumerate(asset_names):
             row = i // num_cols
             col = i % num_cols
             ax = axes[row, col] if num_assets > 1 else axes  # Handle the case when there is only one asset
+
+            # Plot historical data
             historical_data = [price for _, price in self.__asset_data[asset_name]]
+            x = list(range(len(historical_data)))
+            bundle_index = 0
+            for j in range(1, len(x), 100):
+                hue = (base_hue + bundle_index * hue_increment) % 1.0
+                bundle_color = mcolors.hsv_to_rgb((hue, 0.8, 0.8))  # Adjust saturation and value for clarity
+                ax.plot(x[j:j + 100], historical_data[j:j + 100], color=bundle_color,
+                        label=f"{asset_name} (Historical)", linestyle='-' if j == 0 else '--')
+                bundle_index += 1
+
+            # Plot predictions
             predicted_prices = self.__asset_predictions[asset_name]
-            self.plot_predictions(historical_data, predicted_prices, asset_name, ax)
+            ax.plot(range(len(historical_data), len(historical_data) + len(predicted_prices)), predicted_prices,
+                    color='orange', label=f"{asset_name} (Predictions)")
+
+            ax.set_title(asset_name)
+            ax.legend()
 
         plt.tight_layout()
         plt.show()
