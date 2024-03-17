@@ -35,3 +35,24 @@ def generate_risk_and_return_weights(n=100):
         risk_weight = 1 - return_weight
         weights.append((return_weight, risk_weight))
     return weights
+
+def generate_weights_3_objectives(n=10):
+    """
+    Generate k1, k2, and k3 values based on a specific pattern for three objectives.
+
+    Parameters:
+        - n (int): Number of times a dimension is split.
+
+    Returns:
+        - List of tuples: Each tuple contains k1, k2, and k3 values.
+    """
+    weights = []
+    for j1 in range(n + 1):  # Adjust range to include 0 and n
+        for j2 in range(n + 1 - j1):  # Adjust range based on j1
+            j3 = n - j1 - j2
+            k1 = j1 / n
+            k2 = j2 / n
+            k3 = j3 / n
+            weights.append((k1, k2, k3))
+    return weights
+
