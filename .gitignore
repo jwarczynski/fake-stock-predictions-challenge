@@ -4,14 +4,7 @@ __pycache__/
 *$py.class
 
 .idea
-Bundle1/*
-Bundle2/*
-Bundle3/*
-
-experiment_results/*
-assets_bundles/*
-predictions/
-report/
+res
 #tests/
 
 # C extensions

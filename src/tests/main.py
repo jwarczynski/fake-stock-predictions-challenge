@@ -1,5 +1,5 @@
-from helpers.visualizer import plot_pareto_front
-from warren_buffett import WarrenBuffett
+from src.helpers.visualizer import plot_pareto_front
+from src.warren_buffett import WarrenBuffett
 import numpy as np
 import pandas as pd
 
@@ -42,7 +42,7 @@ def save_pareto_front(pareto_solutions, filename):
             file.write(f"{formatted_profit} {formatted_risk}\n")
 
 
-preds = pd.read_csv("predictions.csv")
+preds = pd.read_csv("../res/predictions/predictions3.csv")
 preds.set_index("time", inplace=True)
 
 wb_ecm = WarrenBuffett(preds, "ecm", "Bundle2")

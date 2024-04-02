@@ -1,4 +1,4 @@
-from moead.metrics.evaluator import MetricEvaluator
+from src.moead.metrics.evaluator import MetricEvaluator
 
 
 def calculate_igd_for_group(group, reference_pareto):

@@ -1,7 +1,7 @@
 import numpy as np
 from cvxopt import matrix, solvers
 
-from helpers.helper import generate_risk_and_return_weights, calculate_risk
+from src.helpers.helper import generate_risk_and_return_weights, calculate_risk
 
 
 def calculate_returns(weights, expected_returns):

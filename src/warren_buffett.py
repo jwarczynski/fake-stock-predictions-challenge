@@ -9,7 +9,7 @@ from startegies.weighted_sum_strategy import WeightedSumStrategy
 from startegies.epsilon_constrained_strategy import EpsilonConstrainedStrategy
 
 class WarrenBuffett:
-    def __init__(self, predictions, strategy="wsm", path="assets_bundles/Bundle3", extension=".txt"):
+    def __init__(self, predictions, strategy="wsm", path="../res/assets_bundles/Bundle3", extension=".txt"):
         self.__asset_data = load_data(path, extension)
 
         self.__asset_predictions = {}
