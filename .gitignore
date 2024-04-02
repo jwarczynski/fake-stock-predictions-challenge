@@ -8,9 +8,11 @@ Bundle1/*
 Bundle2/*
 Bundle3/*
 
-history/*
-
-report/*
+experiment_results/*
+assets_bundles/*
+predictions/
+report/
+#tests/
 
 # C extensions
 *.so

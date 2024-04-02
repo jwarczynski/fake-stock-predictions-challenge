@@ -9,10 +9,13 @@ from startegies.weighted_sum_strategy import WeightedSumStrategy
 from startegies.epsilon_constrained_strategy import EpsilonConstrainedStrategy
 
 class WarrenBuffett:
-    def __init__(self, strategy="wsm", path="Bundle2", extension=".txt"):
+    def __init__(self, predictions, strategy="wsm", path="assets_bundles/Bundle3", extension=".txt"):
         self.__asset_data = load_data(path, extension)
 
         self.__asset_predictions = {}
+        for company in predictions.columns:
+            self.__asset_predictions[company] = predictions[company].values
+
         self.__asset_expected_returns = {}
         self.__asset_std_devs = {}
         self.__covariance_matrix = None
@@ -41,7 +44,7 @@ class WarrenBuffett:
         pass
 
     def make_me_rich(self):
-        self.__make_predictions()
+        # self.__make_predictions()
         self.__calculate_expected_returns()
         self.__calculate_std_devs()
         self.__calculate_covariance_matrix()

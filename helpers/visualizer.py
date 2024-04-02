@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def plot_pareto_front(solution_list, selected_index=None):
+def plot_pareto_front(ax, solution_list, selected_index=None, title='Expected Return vs. Risk', xlabel='Expected Return', ylabel='Risk'):
     """
     Plot the Pareto front.
 
@@ -11,13 +11,15 @@ def plot_pareto_front(solution_list, selected_index=None):
 
     Example usage:
     plot_pareto_front([(weights1, expected_return1, risk1), (weights2, expected_return2, risk2), ...], selected_index=0)
+    :param selected_index: index of the selected solution in solution_list
+    :param solution_list:
+    :param ax: pyplot axis object
     """
     expected_returns = [solution[1] for solution in solution_list]
     risks = [solution[2] for solution in solution_list]
 
-    plt.figure(figsize=(10, 6))
-    plt.scatter(expected_returns, risks, marker='o', color='b')
-    plt.plot(expected_returns, risks, color='r', linestyle='-', linewidth=1)
+    ax.scatter(expected_returns, risks, marker='o', color='b')
+    # plt.plot(expected_returns, risks, color='r', linestyle='-', linewidth=1)
 
     if selected_index is not None:
         selected_solution = solution_list[selected_index]
@@ -27,11 +29,10 @@ def plot_pareto_front(solution_list, selected_index=None):
         plt.annotate('Selected Solution', (selected_return, selected_risk), xytext=(selected_return -0.1, selected_risk + 10 * selected_risk),
                      arrowprops=dict(facecolor='black', arrowstyle='->'))
 
-    plt.xlabel('Expected Return')
-    plt.ylabel('Risk')
-    plt.title('Expected Return vs. Risk')
-    plt.grid(True)
-    plt.show()
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    ax.grid(True)
 
 
 def plot_predictions(historical_data, predicted_prices, asset_name, save=False):
