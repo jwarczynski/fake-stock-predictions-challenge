@@ -29,7 +29,7 @@ def get_generations_plot(all_data, ax=None, num_scalar_funcs=None, ylim=None, xl
     if ax is None:
         return fig, ax
     else:
-        return ax
+        return ax, cbar
 
 
 def get_igd_for_generations_plot(igd_values, ax=None, num_scalar_funcs=None, title="IGD for Generations"):
@@ -89,5 +89,42 @@ def show_all_generation_plots(df):
             ax.get_legend().remove()
             if i == len(df['TotalGenerations'].unique()) - 1:
                 ax.set_xlabel('Profit')
+    plt.tight_layout()
+    plt.show()
+
+
+import numpy as np
+def individauls_comparison(modification_df, v1_df):
+    generations = [100, 300]
+    funcs = [50, 100]
+    popul_fig, axs = plt.subplots(len(generations), 2 * len(funcs), figsize=(15, 10))
+
+    for i, gen in enumerate(generations):
+        for j, scalar_funcs in enumerate(sorted(funcs)):
+            data_modif = modification_df[
+                (modification_df['TotalGenerations'] == gen) & (modification_df['Scalar_funcs'] == scalar_funcs)]
+            data_v1 = v1_df[(v1_df['TotalGenerations'] == gen) & (v1_df['Scalar_funcs'] == scalar_funcs)]
+
+            max_profit = np.max([data_modif['Profit'].max(), data_v1['Profit'].max()])
+            max_risk = np.max([data_modif['Risk'].max(), data_v1['Risk'].max()])
+
+            ax = axs[i, 2 * j]
+            get_generations_plot(data_modif, ax=ax, num_scalar_funcs=scalar_funcs, xlim=(0, max_profit),
+                                 ylim=(0, max_risk))
+            ax.get_legend().remove()
+            ax = axs[i, 2 * j + 1]
+            get_generations_plot(data_v1, ax=ax, num_scalar_funcs=scalar_funcs, xlim=(0, max_profit),
+                                 ylim=(0, max_risk))
+            ax.get_legend().remove()
+
+    axs[0, 0].set_title('Modified MOEA/D 50 funcs', fontsize=12, fontweight='bold')
+    axs[0, 1].set_title('MOEA/D 50 funcs', fontsize=12, fontweight='bold')
+    axs[0, 2].set_title('Modified MOEA/D 100 funcs', fontsize=12, fontweight='bold')
+    axs[0, 3].set_title('MOEA/D 100 funcs', fontsize=12, fontweight='bold')
+
+    for i, gen in enumerate(generations):
+        axs[i, 0].set_ylabel(f"Generations: {gen}", fontsize=12, fontweight='bold', rotation=90)
+        axs[i, 2].set_ylabel(f"Generations: {gen}", fontsize=12, fontweight='bold', rotation=90)
+
     plt.tight_layout()
     plt.show()

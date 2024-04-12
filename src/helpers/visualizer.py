@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 
 
-def plot_pareto_front(ax, solution_list, selected_index=None, title='Expected Return vs. Risk', xlabel='Expected Return', ylabel='Risk'):
+def plot_pareto_front(ax, solution_list, selected_index=None, title='Expected Return vs. Risk',
+                      xlabel='Expected Return', ylabel='Risk'):
     """
     Plot the Pareto front.
 
@@ -25,9 +26,10 @@ def plot_pareto_front(ax, solution_list, selected_index=None, title='Expected Re
         selected_solution = solution_list[selected_index]
         selected_return = selected_solution[1]
         selected_risk = selected_solution[2]
-        plt.scatter(selected_return, selected_risk, color='red', marker='*', s=100)
-        plt.annotate('Selected Solution', (selected_return, selected_risk), xytext=(selected_return -0.1, selected_risk + 10 * selected_risk),
-                     arrowprops=dict(facecolor='black', arrowstyle='->'))
+        ax.scatter(selected_return, selected_risk, color='red', marker='*', s=100)
+        ax.annotate('Selected Solution', (selected_return, selected_risk),
+                    xytext=(selected_return - 0.1, selected_risk + 1 * selected_risk),
+                    arrowprops=dict(facecolor='black', arrowstyle='->'))
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -39,7 +41,8 @@ def plot_predictions(historical_data, predicted_prices, asset_name, save=False):
     last_time = len(historical_data)
     plt.figure(figsize=(14, 7), dpi=100)
     plt.plot(historical_data, label='Real')
-    plt.plot(range(last_time, last_time + len(predicted_prices)), predicted_prices, label='FFT prediction', linestyle='--')
+    plt.plot(range(last_time, last_time + len(predicted_prices)), predicted_prices, label='FFT prediction',
+             linestyle='--')
     plt.xlabel('Time')
     plt.ylabel('Price')
     plt.title(f'{asset_name} stock prices & Fourier predictions')

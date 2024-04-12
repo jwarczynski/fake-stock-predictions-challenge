@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import seaborn as sns
 
 
@@ -20,7 +21,7 @@ def plot_pareto_fronts(ax, pareto_fronts, linear_front_index=None):
     ax.legend()
 
 
-def get_pareto_fronts_plot(pareto_fronts, ax=None, algorithm_params=None, reference_pareto=None, labels=None):
+def get_pareto_fronts_plot(pareto_fronts, ax=None, algorithm_params=None, reference_pareto=None, labels=None, ref_pareto_label=None):
     if ax is None:
         fig, ax = plt.subplots(figsize=(8, 6))
 
@@ -35,7 +36,7 @@ def get_pareto_fronts_plot(pareto_fronts, ax=None, algorithm_params=None, refere
     if reference_pareto is not None:
         ref_profits = [point[0] for point in reference_pareto]
         ref_risks = [point[1] for point in reference_pareto]
-        ax.plot(ref_profits, ref_risks, label='Reference Pareto Front', color=palette[len(pareto_fronts)])
+        ax.plot(ref_profits, ref_risks, label='Reference Pareto Front' if ref_pareto_label is None else ref_pareto_label, color=palette[len(pareto_fronts)])
 
         # # Add a specific legend entry for the reference Pareto front
         # if algorithm_params is not None:

@@ -5,8 +5,9 @@ import matplotlib.colors as mcolors
 from helpers.data_loader import load_data
 from fortune_tellers.fft_fortune_teller import FFTFortuneTeller
 from helpers.visualizer import plot_predictions
-from startegies.weighted_sum_strategy import WeightedSumStrategy
-from startegies.epsilon_constrained_strategy import EpsilonConstrainedStrategy
+from strategies.weighted_sum_strategy import WeightedSumStrategy
+from strategies.epsilon_constrained_strategy import EpsilonConstrainedStrategy
+
 
 class WarrenBuffett:
     def __init__(self, predictions, strategy="wsm", path="../res/assets_bundles/Bundle3", extension=".txt"):
@@ -165,14 +166,18 @@ class WarrenBuffett:
             plot_predictions(historical_data, predicted_prices, asset_name)
 
     def show_weights_for_assets(self, asset_weights):
-        asset_names = list(asset_weights.keys())
-        weights = list(asset_weights.values())
+        return show_weights_for_assets(asset_weights)
 
-        plt.figure(figsize=(10, 6))
-        plt.barh(asset_names, [w * 100 for w in weights], color='skyblue')  # Multiply weights by 100 to show as percentage
-        plt.xlabel('Percentage of Total Budget')
-        plt.ylabel('Asset Name')
-        plt.title('Portfolio Allocation')
-        plt.gca().invert_yaxis()  # Invert y-axis to display top-down
-        plt.tight_layout()  # Adjust layout to prevent cropping
-        plt.show()
+
+def show_weights_for_assets(asset_weights):
+    asset_names = list(asset_weights.keys())
+    weights = list(asset_weights.values())
+
+    plt.figure(figsize=(10, 6))
+    plt.barh(asset_names, [w * 100 for w in weights], color='skyblue')  # Multiply weights by 100 to show as percentage
+    plt.xlabel('Percentage of Total Budget')
+    plt.ylabel('Asset Name')
+    plt.title('Portfolio Allocation')
+    plt.gca().invert_yaxis()  # Invert y-axis to display top-down
+    plt.tight_layout()  # Adjust layout to prevent cropping
+    plt.show()
