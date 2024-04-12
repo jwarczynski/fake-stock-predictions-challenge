@@ -1,5 +1,5 @@
 import os
-
+import pandas as pd
 
 def load_data(folder_path="Bundle2", extension=".txt"):
     asset_data = {}
@@ -20,3 +20,13 @@ def load_data(folder_path="Bundle2", extension=".txt"):
             asset_data[asset_name] = measurements
 
     return asset_data
+
+
+def to_dataframe(data):
+    data = {k: [pair[1] for pair in pairs] for k, pairs in data.items()}
+
+    df = pd.DataFrame(data)
+    df.index.names = ['Time']
+    df.reset_index(inplace=True, drop=False)
+
+    return df
