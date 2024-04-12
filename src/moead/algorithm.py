@@ -15,6 +15,8 @@ class MOEADAlgorithm:
         self.population_size = kwargs.get('population_size', len(scalarizing_functions))
         self.generations = kwargs.get('generations', 10000)
         self.neighborhood_size = kwargs.get('neighborhood_size', 5)
+        self.intital_assignment = kwargs.get('initial_assignment', 'greedy')
+        self.generate_high_risk_vectors = kwargs.get('generate_high_risk_vectors', True)
 
         self.scalarizing_functions = scalarizing_functions
         self.function_to_incumbents = {}
@@ -22,8 +24,8 @@ class MOEADAlgorithm:
 
     def run(self, metric_evaluator=None):
         self.population = self.__initialize_population(self.population_size)
-        self.__random_assignment()
-        # self.__greedy_assignment()
+        self.__initial_assignment()
+
         for i in range(0, self.generations + 1):
             if metric_evaluator is not None and i % metric_evaluator.generations_interval == 0:
                 metric_evaluator.add_generation(
@@ -41,34 +43,15 @@ class MOEADAlgorithm:
         return list(self.function_to_incumbents.values())
 
     def __initialize_population(self, n):
-        high_risk_vectors =  self.generate_vectors(n)
-        # return high_risk_vectors
         random_vectors = np.array([self._generate_random_individual() for _ in range(n)])
-        return np.concatenate((high_risk_vectors, random_vectors))
-        # pop = np.array([self._generate_random_individual() for _ in range(n)])
-        # for i in range(self.instance.assets_number):
-        #     individual = np.zeros(self.instance.assets_number)
-        #     individual[i] = 1
-        #     np.append(pop, individual)
-        # return pop
-        # return np.array([self._generate_random_individual() for _ in range(n-20)])
 
-    def _generate_random_individual(self):
-        random_numbers = np.random.rand(self.instance.assets_number - 1)
-        random_numbers.sort()
-        return np.diff(np.concatenate(([0], random_numbers, [1])))
+        if self.generate_high_risk_vectors:
+            high_risk_vectors = self.generate_vectors(n)
+            return np.concatenate((high_risk_vectors, random_vectors))
 
-    def __random_assignment(self):
-        for scalarizing_function in self.scalarizing_functions:
-            idx = np.random.choice(len(self.population), replace=False)
-            self.function_to_incumbents[scalarizing_function] = self.population[idx]
+        return random_vectors
 
-    def __greedy_assignment(self):
-        for scalarizing_function in self.scalarizing_functions:
-            self.function_to_incumbents[scalarizing_function] = max(self.population, key=lambda incumbent: scalarizing_function(incumbent, self.instance))
-
-
-    def generate_vectors(self, num_vectors=100, max_nonzero=2):
+    def generate_vectors(self, num_vectors=100, max_nonzero=1   ):
         vectors = []
         for _ in range(num_vectors):
             # Generate random indices for nonzero weights
@@ -81,6 +64,26 @@ class MOEADAlgorithm:
             weights /= np.sum(weights)
             vectors.append(weights)
         return np.array(vectors)
+
+    def _generate_random_individual(self):
+        random_numbers = np.random.rand(self.instance.assets_number - 1)
+        random_numbers.sort()
+        return np.diff(np.concatenate(([0], random_numbers, [1])))
+
+    def __initial_assignment(self):
+        if self.intital_assignment == 'random':
+            self.__random_assignment()
+        elif self.intital_assignment == 'greedy':
+            self.__greedy_assignment()
+
+    def __random_assignment(self):
+        for scalarizing_function in self.scalarizing_functions:
+            idx = np.random.choice(len(self.population), replace=False)
+            self.function_to_incumbents[scalarizing_function] = self.population[idx]
+
+    def __greedy_assignment(self):
+        for scalarizing_function in self.scalarizing_functions:
+            self.function_to_incumbents[scalarizing_function] = max(self.population, key=lambda incumbent: scalarizing_function(incumbent, self.instance))
 
     def __evolve_population(self):
         scalarizing_functions = list(self.function_to_incumbents.keys())
